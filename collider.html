@@ -12,12 +12,14 @@
     </style>
   </head>
   <body>
+  <!-- <div>Score: <span id='#score'>10</span></div> -->
     <script>
       var GameSetup = function(){
         var boardProperties = {
         width: 750,
         height: 500
       }
+        var score = 0
         var dataSet = [0,1,2,3,4,5,6,7,8,9];
         var svg = d3.select('body').append('svg').attr('width', boardProperties.width).attr('height', boardProperties.height);
 
@@ -28,13 +30,17 @@
             .attr('cx', function(){ return Math.random() * boardProperties.width })
             .attr('class', 'enemy');
 
-        player = d3.select('svg')
+        var player = d3.select('svg')
             .insert('circle').style('fill', 'orange')
             .attr('r', 10)
            .data([ {"x": 10, "y": 10}])
             .attr('cy', function(){ return boardProperties.height/2 })
             .attr('cx', function(){ return boardProperties.width/2 })
             .attr('id', 'player')
+
+        var scoreBoard = d3.select('body').append('div')
+        scoreBoard.attr('width', 100).attr('height', 100).attr('fill', 'green').text("Score");
+
             // .attr("id", "draggable")
         // player.on('click', function(){
           // d3.select(this).style('fill', 'green');
@@ -73,9 +79,17 @@
           // console.log(enemies.attr('cx'))
         detectCollisions();
 
+         
         setInterval(function(){ detectCollisions() }, 1)
+        var scoreBoardCounter = setInterval(function(){
+	          score += 5
+	          console.log(score)
+	        }, 100)
         setInterval(function(){
-          circles.transition().duration(1000).attr('cy', function(){ return Math.random() * boardProperties.height }).attr('cx', function(){ return Math.random() * boardProperties.width });
+          circles.transition()
+              .duration(1000)
+              .attr('cy', function(){ return Math.random() * boardProperties.height })
+              .attr('cx', function(){ return Math.random() * boardProperties.width });
         }, 2000);
       }()
 
