@@ -19,8 +19,7 @@
         width: 750,
         height: 500
       }
-        var score = 0
-        var dataSet = [0,1,2,3,4,5,6,7,8,9];
+        var dataSet = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
         var svg = d3.select('body').append('svg').attr('width', boardProperties.width).attr('height', boardProperties.height);
 
         var circles = svg.selectAll('circle').data(dataSet).enter().append('circle');
@@ -38,8 +37,27 @@
             .attr('cx', function(){ return boardProperties.width/2 })
             .attr('id', 'player')
 
-        var scoreBoard = d3.select('body').append('div')
-        scoreBoard.attr('width', 100).attr('height', 100).attr('fill', 'green').text("Score");
+        var playerScore = d3.select('body').select('div')
+            .data([{score: 0}])
+            .enter()
+            .append('div')
+        playerScore.attr('width', 100)
+            .attr('height', 100)
+            .attr('id', 'playerScore')
+            .attr('score', function(dat){ return dat.score })
+            .text(function(dat){return dat.score})
+
+        var highScore = d3.select('body').select('div')
+            .data([{highScore: 0}])
+            .enter()
+            .append('div')
+        highScore.attr('width', 100)
+            .attr('height', 100)
+            .attr('width', 100)
+            .attr('id', 'highScore')
+            .attr('highScore', function(dat){ return dat.highScore })
+            .text(function(dat){ return dat.highScore })
+
 
             // .attr("id", "draggable")
         // player.on('click', function(){
@@ -67,6 +85,7 @@
           enemies.each(function(){
             if( Math.abs(playerX - Math.floor(parseInt(d3.select(this).attr('cx')))) < 21 && ((Math.abs(playerY - Math.floor(parseInt(d3.select(this).attr('cy')))) < 21)) ) {
             console.log('collision');
+            d3.select('div').attr('score', function(dat) { return dat.score = 0 }).text(0);
             }
           })
             // if((Math.abs(playerX - Math.floor(parseInt(enemies.attr('cx')))) < 21) && ((Math.abs(playerY - Math.floor(parseInt(enemies.attr('cy')))) < 21))) {
@@ -77,14 +96,20 @@
           }
           // console.log(player.attr('cx'))
           // console.log(enemies.attr('cx'))
-        detectCollisions();
+        // detectCollisions();
 
-         
         setInterval(function(){ detectCollisions() }, 1)
         var scoreBoardCounter = setInterval(function(){
-	          score += 5
-	          console.log(score)
-	        }, 100)
+            d3.select('div')
+                .attr('score', function(dat) { return dat.score += 5 })
+                .text(function(dat){ return dat.score });
+            var high = d3.select('div#highScore')
+            var current = d3.select('div#playerScore')
+            if( parseInt(high.attr('highScore')) < parseInt(current.attr('score')) ){
+              high.attr('highScore', function(dat){ return dat.highScore = current.attr('score')})
+              high.text(function(dat){return dat.highScore})
+            }
+          }, 100)
         setInterval(function(){
           circles.transition()
               .duration(1000)
