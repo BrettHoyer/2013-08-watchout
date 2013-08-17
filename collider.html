@@ -3,6 +3,13 @@
   <head>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="collider.js"></script>
+    <style>
+    	#draggable{
+        text-anchor: start;
+        cursor: pointer;
+        text-anchor: middle;
+      }
+    </style>
   </head>
   <body>
     <script>
@@ -11,21 +18,35 @@
         width: 750,
         height: 500
       }
-      var dataSet = [0,1,2,3,4,5,6,8,9,10,11,12,13,14,15,16,17,18,19];
+        // var dataSet = [0,1,2,3,4,5,6,8,9,10,11,12,13,14,15,16,17,18,19];
         var svg = d3.select('body').append('svg').attr('width', boardProperties.width).attr('height', boardProperties.height);
-        var circles = svg.selectAll('circle').data(dataSet).enter().append('circle');
-        circles.style('fill', 'steelBlue').attr('r', 10).attr('cy', function(){ return Math.random() * boardProperties.height }).attr('cx', function(){ return Math.random() * boardProperties.width });
-        var playerName = ["Ruben"];
-        var playerTriangle = svg.selectAll('triangle-up').data(playerName).enter().append('triangle-up');
-        playerTriangle.style('fill', 'orange').attr('cy', function(){ return boardProperties.height/2 }).attr('cx', function(){ return boardProperties.width/2 });
-        setInterval(function(){
-          circles.transition().duration(1000).attr('cy', function(){ return Math.random() * boardProperties.height }).attr('cx', function(){ return Math.random() * boardProperties.width });
-        }, 1200);
 
-        
+        // var circles = svg.selectAll('circle').data(dataSet).enter().append('circle');
+        // circles.style('fill', 'steelBlue').attr('r', 10).attr('cy', function(){ return Math.random() * boardProperties.height }).attr('cx', function(){ return Math.random() * boardProperties.width });
+        player = d3.select('svg')
+            .insert('circle').style('fill', 'orange')
+            .attr('r', 10)
+            .attr('cy', function(){ return boardProperties.height/2 })
+            .attr('cx', function(){ return boardProperties.width/2 })
+            .attr("id", "draggable");
+        // player.on('click', function(){
+          // d3.select(this).style('fill', 'green');
+        // })
+        // d3.behavior.drag().on('drag', function(){
+        //     d3.select(this).style('fill', 'green');
+        // });
+
+        var dragmove = function(d) {
+          d3.select('#draggable').attr("cy", d3.event.y).attr("cx", d3.event.x)
+        }
+
+        var drag = d3.behavior.drag().on("drag", dragmove);
+
+        // setInterval(function(){
+        //   circles.transition().duration(1000).attr('cy', function(){ return Math.random() * boardProperties.height }).attr('cx', function(){ return Math.random() * boardProperties.width });
+        // }, 1200);
       }()
 
-        
 
     </script>
   </body>
