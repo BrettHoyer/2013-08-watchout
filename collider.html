@@ -4,7 +4,7 @@
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="collider.js"></script>
     <style>
-    	#draggable{
+      #draggable{
         text-anchor: start;
         cursor: pointer;
         text-anchor: middle;
@@ -18,33 +18,65 @@
         width: 750,
         height: 500
       }
-        // var dataSet = [0,1,2,3,4,5,6,8,9,10,11,12,13,14,15,16,17,18,19];
+        var dataSet = [0,1,2,3,4,5,6,7,8,9];
         var svg = d3.select('body').append('svg').attr('width', boardProperties.width).attr('height', boardProperties.height);
 
-        // var circles = svg.selectAll('circle').data(dataSet).enter().append('circle');
-        // circles.style('fill', 'steelBlue').attr('r', 10).attr('cy', function(){ return Math.random() * boardProperties.height }).attr('cx', function(){ return Math.random() * boardProperties.width });
+        var circles = svg.selectAll('circle').data(dataSet).enter().append('circle');
+        circles.style('fill', 'steelBlue')
+            .attr('r', 10)
+            .attr('cy', function(){ return Math.random() * boardProperties.height })
+            .attr('cx', function(){ return Math.random() * boardProperties.width })
+            .attr('class', 'enemy');
+
         player = d3.select('svg')
             .insert('circle').style('fill', 'orange')
             .attr('r', 10)
+           .data([ {"x": 10, "y": 10}])
             .attr('cy', function(){ return boardProperties.height/2 })
             .attr('cx', function(){ return boardProperties.width/2 })
-            .attr("id", "draggable");
+            .attr('id', 'player')
+            // .attr("id", "draggable")
         // player.on('click', function(){
           // d3.select(this).style('fill', 'green');
         // })
         // d3.behavior.drag().on('drag', function(){
         //     d3.select(this).style('fill', 'green');
         // });
+        var drag = d3.behavior.drag()
+            .on("drag", function(d, i){
+              player.attr('cx', d3.event.x + "px")
+              player.attr('cy', d3.event.y + "px")
+              });
 
-        var dragmove = function(d) {
-          d3.select('#draggable').attr("cy", d3.event.y).attr("cx", d3.event.x)
-        }
+            player.call(drag)
 
-        var drag = d3.behavior.drag().on("drag", dragmove);
+        var detectCollisions = function(){
+          var player = d3.select('#player');
+          var enemies = d3.selectAll('.enemy');
 
-        // setInterval(function(){
-        //   circles.transition().duration(1000).attr('cy', function(){ return Math.random() * boardProperties.height }).attr('cx', function(){ return Math.random() * boardProperties.width });
-        // }, 1200);
+          var playerX = Math.floor(parseInt(player.attr('cx')));
+          var playerY = Math.floor(parseInt(player.attr('cy')));
+
+
+          enemies.each(function(){
+            if( Math.abs(playerX - Math.floor(parseInt(d3.select(this).attr('cx')))) < 21 && ((Math.abs(playerY - Math.floor(parseInt(d3.select(this).attr('cy')))) < 21)) ) {
+            console.log('collision');
+            }
+          })
+            // if((Math.abs(playerX - Math.floor(parseInt(enemies.attr('cx')))) < 21) && ((Math.abs(playerY - Math.floor(parseInt(enemies.attr('cy')))) < 21))) {
+            //   console.log("collision")
+            //   // console.log("collision")
+
+            // // }
+          }
+          // console.log(player.attr('cx'))
+          // console.log(enemies.attr('cx'))
+        detectCollisions();
+
+        setInterval(function(){ detectCollisions() }, 1)
+        setInterval(function(){
+          circles.transition().duration(1000).attr('cy', function(){ return Math.random() * boardProperties.height }).attr('cx', function(){ return Math.random() * boardProperties.width });
+        }, 2000);
       }()
 
 
